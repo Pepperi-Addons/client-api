@@ -28,7 +28,7 @@ interface ApiSearchParams {
 
 interface ApiSearchResult {
     /**
-     * 
+     *  The objects returned from the search
      */
     objects: [object],
     count: number
@@ -51,6 +51,10 @@ export default function(bridge: Bridge) {
                 update: function (params: any) {
                     return bridgeToCPI('pepperi.api.transactions.update', params);
                 },
+                /**
+                 * Search the transactions
+                 * @param params 
+                 */
                 search: function (params: ApiSearchParams): Promise<ApiSearchResult> {
                     return bridgeToCPI('pepperi.api.transactions.search', params);
                 },
