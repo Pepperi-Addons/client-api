@@ -6,11 +6,11 @@ type ObjectIdentifier = { UUID: string } | { InternalID: number };
 type TypeIdentifier = { Name: string } | { InternalID: number };
 type CatalogIdentifier = { Name: string } | { InternalID: number } | { UUID: string };
 
-interface SuccessResult {
+export interface SuccessResult {
     success: true
 }
 
-interface ErrorResult {
+export interface ErrorResult {
     success: false
     error: {
         code: number;
@@ -18,7 +18,7 @@ interface ErrorResult {
     }
 }
 
-interface SearchParams<T extends string> {  
+export interface SearchParams<T extends string> {  
     fields: T[];
     page?: number;
     pageSize?: number;
@@ -26,21 +26,21 @@ interface SearchParams<T extends string> {
     sorting: { Field: string, Ascending: boolean}[]
 };
 
-interface SearchResult<T extends string> extends SuccessResult {
+export interface SearchResult<T extends string> extends SuccessResult {
     objects: { [K in T]: any }[],
     count: number
     page: number
 };
 
-interface TransactionLinesSearchParams<T extends string> extends SearchParams<T> {
+export interface TransactionLinesSearchParams<T extends string> extends SearchParams<T> {
     transactionFilter?: JSONFilter
 }
 
-interface OrderCenterSearchParams<T extends string> extends SearchParams<T> {
+export interface OrderCenterSearchParams<T extends string> extends SearchParams<T> {
     transaction: TransactionIdentifier
 }
 
-interface UpdateParams {
+export interface UpdateParams {
     objects: { 
         UUID: string,
         [key: string]: any 
@@ -48,17 +48,17 @@ interface UpdateParams {
     save?: boolean;
 }
 
-interface UpdateStatus {
+export interface UpdateStatus {
     id: string;
     status: 'updated' | 'failed' | 'added' | 'deleted';
     message: string
 }
 
-interface UpdateResult extends SuccessResult {
+export interface UpdateResult extends SuccessResult {
     result: UpdateStatus[]
 }
 
-interface OrderCenterUpdateParams {
+export interface OrderCenterUpdateParams {
     transaction: TransactionIdentifier
     objects: { 
         item: ItemIdentifier,
@@ -67,24 +67,24 @@ interface OrderCenterUpdateParams {
     save?: boolean;
 }
 
-interface UDTGetParams {
+export interface UDTGetParams {
     table: string;
     mainKey: string;
     secondaryKey: string;
     index?: number;
 }
 
-interface UDTGetResult extends SuccessResult {
+export interface UDTGetResult extends SuccessResult {
     value: string
 }
 
-interface UDTGetListParams {
+export interface UDTGetListParams {
     table: string;
     mainKey?: string;
     secondaryKey?: string;
 }
 
-interface UDTGetListResult extends SuccessResult {
+export interface UDTGetListResult extends SuccessResult {
     objects: {
         mainKey: string;
         secondaryKey: string;
@@ -92,7 +92,7 @@ interface UDTGetListResult extends SuccessResult {
     }[]
 }
 
-interface UDTUpsertParams {
+export interface UDTUpsertParams {
     table: string;
     mainKey: string;
     secondaryKey: string;
@@ -100,31 +100,31 @@ interface UDTUpsertParams {
     value: string;
 }
 
-interface GetParams<T extends string> {
+export interface GetParams<T extends string> {
     fields: T[],
     key: ObjectIdentifier
 }
 
-interface GetResult<T extends string> {
+export interface GetResult<T extends string> {
     object: { [K in T]: any }
 }
 
-interface OrderCenterGetParams<T extends string> {
+export interface OrderCenterGetParams<T extends string> {
     transaction: TransactionIdentifier
     item: ItemIdentifier
     fields: T[],
 }
 
-interface OrderCenterGetResult<T extends string> {
+export interface OrderCenterGetResult<T extends string> {
     object: { [K in T]: any }
 }
 
-interface CreateAccountParams {
+export interface CreateAccountParams {
     type?: TypeIdentifier
     object?: { [key: string]: any } 
 }
 
-interface CreateContactParams {
+export interface CreateContactParams {
     type?: TypeIdentifier
     references: {
         account: ObjectIdentifier
@@ -132,7 +132,7 @@ interface CreateContactParams {
     object?: { [key: string]: any } 
 }
 
-interface CreateActivityParams {
+export interface CreateActivityParams {
     type: TypeIdentifier
     references: {
         account: ObjectIdentifier
@@ -140,7 +140,7 @@ interface CreateActivityParams {
     object?: { [key: string]: any } 
 }
 
-interface CreateTransactionParams {
+export interface CreateTransactionParams {
     type: TypeIdentifier
     references: {
         account: ObjectIdentifier;
@@ -150,11 +150,11 @@ interface CreateTransactionParams {
     object?: { [key: string]: any } 
 }
 
-interface CreateResult extends SuccessResult, UpdateStatus {
+export interface CreateResult extends SuccessResult, UpdateStatus {
     
 }
 
-interface AddTransactionLinesParams {
+export interface AddTransactionLinesParams {
     transaction: TransactionIdentifier,
     lines: {
         item: ItemIdentifier,
@@ -165,7 +165,7 @@ interface AddTransactionLinesParams {
     }[]
 }
 
-interface RemoveTransactionLinesParams {
+export interface RemoveTransactionLinesParams {
     transaction: TransactionIdentifier,
     lines: ObjectIdentifier[]
 }
