@@ -13,5 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^3.9.2"
+  },
+  "dependencies": {
+    "@pepperi-addons/pepperi-filters": "^1.0.4"
   }
 }
