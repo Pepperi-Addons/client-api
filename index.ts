@@ -105,7 +105,7 @@ export interface GetParams<T extends string> {
     key: ObjectIdentifier
 }
 
-export interface GetResult<T extends string> {
+export interface GetResult<T extends string> extends SuccessResult {
     object: { [K in T]: any }
 }
 
@@ -115,7 +115,7 @@ export interface OrderCenterGetParams<T extends string> {
     fields: T[],
 }
 
-export interface OrderCenterGetResult<T extends string> {
+export interface OrderCenterGetResult<T extends string> extends SuccessResult {
     object: { [K in T]: any }
 }
 
