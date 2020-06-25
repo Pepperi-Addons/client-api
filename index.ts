@@ -23,7 +23,7 @@ export interface SearchParams<T extends string> {
     page?: number;
     pageSize?: number;
     filter?: JSONFilter;
-    sorting: { Field: string, Ascending: boolean}[]
+    sorting?: { Field: string, Ascending: boolean}[]
 };
 
 export interface SearchResult<T extends string> extends SuccessResult {
