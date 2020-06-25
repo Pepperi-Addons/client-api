@@ -6,18 +6,6 @@ type ObjectIdentifier = { UUID: string } | { InternalID: number };
 type TypeIdentifier = { Name: string } | { InternalID: number };
 type CatalogIdentifier = { Name: string } | { InternalID: number } | { UUID: string };
 
-export interface SuccessResult {
-    success: true
-}
-
-export interface ErrorResult {
-    success: false
-    error: {
-        code: number;
-        message: string;
-    }
-}
-
 export interface SearchParams<T extends string> {  
     fields: T[];
     page?: number;
@@ -26,7 +14,7 @@ export interface SearchParams<T extends string> {
     sorting?: { Field: string, Ascending: boolean}[]
 };
 
-export interface SearchResult<T extends string> extends SuccessResult {
+export interface SearchResult<T extends string> {
     objects: { [K in T]: any }[],
     count: number
     page: number
@@ -54,7 +42,7 @@ export interface UpdateStatus {
     message: string
 }
 
-export interface UpdateResult extends SuccessResult {
+export interface UpdateResult {
     result: UpdateStatus[]
 }
 
@@ -74,7 +62,7 @@ export interface UDTGetParams {
     index?: number;
 }
 
-export interface UDTGetResult extends SuccessResult {
+export interface UDTGetResult {
     value: string
 }
 
@@ -84,7 +72,7 @@ export interface UDTGetListParams {
     secondaryKey?: string;
 }
 
-export interface UDTGetListResult extends SuccessResult {
+export interface UDTGetListResult {
     objects: {
         mainKey: string;
         secondaryKey: string;
@@ -105,7 +93,7 @@ export interface GetParams<T extends string> {
     key: ObjectIdentifier
 }
 
-export interface GetResult<T extends string> extends SuccessResult {
+export interface GetResult<T extends string> {
     object: { [K in T]: any }
 }
 
@@ -115,7 +103,7 @@ export interface OrderCenterGetParams<T extends string> {
     fields: T[],
 }
 
-export interface OrderCenterGetResult<T extends string> extends SuccessResult {
+export interface OrderCenterGetResult<T extends string> {
     object: { [K in T]: any }
 }
 
@@ -150,7 +138,7 @@ export interface CreateTransactionParams {
     object?: { [key: string]: any } 
 }
 
-export interface CreateResult extends SuccessResult, UpdateStatus {
+export interface CreateResult extends UpdateStatus {
     
 }
 
@@ -175,23 +163,34 @@ type Bridge = (params: any) => Promise<any>
 export default function(bridge: Bridge) {
     async function bridgeToCPI(func: string, params: any): Promise<any> {
         params['function'] = func;
-        return await bridge(params);
+        
+        const res =  await bridge(params);
+
+        if (typeof res !== 'object' || typeof res.success !== 'boolean') {
+            throw new Error(`Bridge function returned invalid response: ${res}`)
+        }
+
+        if (!res.success) {
+            throw new Error(`Client API Error. Code: ${res.code}, Messsage: ${res.message}`);
+        }
+        
+        return res;
     }
 
     function searchFunction(key: string) {
-        return <T extends string>(params: SearchParams<T>): Promise<SearchResult<T> | ErrorResult> => {
+        return <T extends string>(params: SearchParams<T>): Promise<SearchResult<T>> => {
             return bridgeToCPI(key, params);
         }
     }
 
     function getFunction(key: string) {
-        return <T extends string>(params: GetParams<T>): Promise<GetResult<T> | ErrorResult> => {
+        return <T extends string>(params: GetParams<T>): Promise<GetResult<T>> => {
             return bridgeToCPI(key, params);
         }
     }
 
     function updateFunction(key: string) {
-        return (params: UpdateParams): Promise<UpdateResult | ErrorResult> => {
+        return (params: UpdateParams): Promise<UpdateResult> => {
             return bridgeToCPI(key, params);
         }
     }
@@ -202,10 +201,10 @@ export default function(bridge: Bridge) {
                 get: getFunction('pepperi.api.transactions.get'),
                 update: updateFunction('pepperi.api.transactions.update'),
                 search: searchFunction('pepperi.api.transactions.search'),
-                addLines: (params: AddTransactionLinesParams): Promise<UpdateResult | ErrorResult> => {
+                addLines: (params: AddTransactionLinesParams): Promise<UpdateResult> => {
                     return bridgeToCPI('pepperi.api.transactions.addLines', params);
                 },
-                removeLines: (params: RemoveTransactionLinesParams): Promise<UpdateResult | ErrorResult> => {
+                removeLines: (params: RemoveTransactionLinesParams): Promise<UpdateResult> => {
                     return bridgeToCPI('pepperi.api.transactions.removeLines', params);
                 }
             },
@@ -249,13 +248,13 @@ export default function(bridge: Bridge) {
                 search: searchFunction('pepperi.api.attachments.search'),
             },
             userDefinedTables: {
-                get: (params: UDTGetParams): Promise<UDTGetResult | ErrorResult> => {
+                get: (params: UDTGetParams): Promise<UDTGetResult> => {
                     return bridgeToCPI('pepperi.api.userDefinedTables.get', params);
                 },
-                upsert: (params: UDTUpsertParams): Promise<UpdateResult | ErrorResult> => {
+                upsert: (params: UDTUpsertParams): Promise<UpdateResult> => {
                     return bridgeToCPI('pepperi.api.userDefinedTables.upsert', params);
                 },
-                getList: (params: UDTGetListParams): Promise<UDTGetListResult | ErrorResult> => {
+                getList: (params: UDTGetListParams): Promise<UDTGetListResult> => {
                     return bridgeToCPI('pepperi.api.userDefinedTables.getList', params);
                 }
             },
@@ -268,25 +267,25 @@ export default function(bridge: Bridge) {
         app: {
             transactions: {
                 update: updateFunction('pepperi.app.transactions.update'),
-                add: (params: CreateTransactionParams): Promise<CreateResult | ErrorResult> => {
+                add: (params: CreateTransactionParams): Promise<CreateResult> => {
                     return bridgeToCPI('pepperi.app.transactions.add', params);
                 },
-                addLines: (params: AddTransactionLinesParams): Promise<UpdateResult | ErrorResult> => {
+                addLines: (params: AddTransactionLinesParams): Promise<UpdateResult> => {
                     return bridgeToCPI('pepperi.app.transactions.addLines', params);
                 },
-                removeLines: (params: RemoveTransactionLinesParams): Promise<UpdateResult | ErrorResult> => {
+                removeLines: (params: RemoveTransactionLinesParams): Promise<UpdateResult> => {
                     return bridgeToCPI('pepperi.app.transactions.removeLines', params);
                 }
             },
             activities: {
                 update: updateFunction('pepperi.app.activities.update'),
-                add: (params: CreateActivityParams): Promise<CreateResult | ErrorResult> => {
+                add: (params: CreateActivityParams): Promise<CreateResult> => {
                     return bridgeToCPI('pepperi.app.activities.add', params);
                 }
             },
             accounts: {
                 update: updateFunction('pepperi.app.accounts.update'),
-                add: (params: CreateAccountParams): Promise<CreateResult | ErrorResult> => {
+                add: (params: CreateAccountParams): Promise<CreateResult> => {
                     return bridgeToCPI('pepperi.app.accounts.add', params);
                 }
             },
@@ -295,7 +294,7 @@ export default function(bridge: Bridge) {
             },
             contacts: {
                 update: updateFunction('pepperi.app.contacts.update'),
-                add: (params: CreateContactParams): Promise<CreateResult | ErrorResult> => {
+                add: (params: CreateContactParams): Promise<CreateResult> => {
                     return bridgeToCPI('pepperi.app.contacts.add', params);
                 }
             },
