@@ -260,7 +260,9 @@ export default function(bridge: Bridge) {
             },
             transactionScopeItems: {
                 get: getFunction('pepperi.api.transactionScopeItems.get'),
-                search: searchFunction('pepperi.api.transactionScopeItems.search'),
+                search: <T extends string>(params: OrderCenterSearchParams<T>): Promise<SearchResult<T>> => {
+                    return bridgeToCPI('pepperi.api.transactionScopeItems.search', params);
+                },
                 update: updateFunction('pepperi.api.transactionScopeItems.update'),
             }
         },
