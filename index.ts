@@ -160,7 +160,7 @@ export interface RemoveTransactionLinesParams {
 
 type Bridge = (params: any) => Promise<any>
 
-export default function(bridge: Bridge) {
+export default function Factory(bridge: Bridge) {
     async function bridgeToCPI(func: string, params: any): Promise<any> {
         params['function'] = func;
         
