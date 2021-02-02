@@ -16,5 +16,8 @@
   },
   "dependencies": {
     "@pepperi-addons/pepperi-filters": "^1.0.4"
-  }
+  },
+  "files": [
+    "dist/**"
+  ]
 }
