@@ -80,6 +80,31 @@ export interface UDTGetListResult {
     }[]
 }
 
+export interface ADALGetParams {
+    addon: string;
+    table: string;
+    key: string;
+}
+
+export interface ADALGetResult {
+    object: {
+        Key: string;
+        [key: string]: any;
+    };
+}
+
+export interface ADALGetListParams {
+    addon: string;
+    table: string;
+}
+
+export interface ADALGetListResult {
+    objects: {
+        Key: string;
+        [key: string]: any;
+    }[]
+}
+
 export interface UDTUpsertParams {
     table: string;
     mainKey: string;
@@ -264,7 +289,15 @@ export default function Factory(bridge: Bridge) {
                     return bridgeToCPI('pepperi.api.transactionScopeItems.search', params);
                 },
                 update: updateFunction('pepperi.api.transactionScopeItems.update'),
-            }
+            },
+            adal: {
+                get: (params: ADALGetParams): Promise<ADALGetResult> => {
+                    return bridgeToCPI('pepperi.api.adal.get', params);
+                },
+                getList: (params: ADALGetListParams): Promise<ADALGetListResult> => {
+                    return bridgeToCPI('pepperi.api.adal.getList', params);
+                }
+            },
         },
         app: {
             transactions: {
