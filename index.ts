@@ -246,7 +246,9 @@ export default function Factory(bridge: Bridge) {
             transactionLines: {
                 get: getFunction('pepperi.api.transactionLines.get'),
                 update: updateFunction('pepperi.api.transactionLines.update'),
-                search: searchFunction('pepperi.api.transactionLines.search'),
+                search: <T extends string>(params: TransactionLinesSearchParams<T>): Promise<SearchResult<T>> => {
+                    return bridgeToCPI('pepperi.api.transactionLines.search', params);
+                }
             },
             users: {
                 get: getFunction('pepperi.api.users.get'),
