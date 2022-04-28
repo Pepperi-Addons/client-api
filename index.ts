@@ -183,6 +183,15 @@ export interface RemoveTransactionLinesParams {
     lines: ObjectIdentifier[]
 }
 
+export interface UDCGetParams {
+    table: string;
+    key: string;
+}
+
+export interface UDCGetListParams {
+    table: string;
+}
+
 type Bridge = (params: any) => Promise<any>
 
 export default function Factory(bridge: Bridge) {
@@ -298,6 +307,14 @@ export default function Factory(bridge: Bridge) {
                 },
                 getList: (params: ADALGetListParams): Promise<ADALGetListResult> => {
                     return bridgeToCPI('pepperi.api.adal.getList', params);
+                }
+            },
+            userDefinedCollections: {
+                get: (params: UDCGetParams): Promise<ADALGetResult> => {
+                    return bridgeToCPI('pepperi.api.userDefinedCollections.get', params);
+                },
+                getList: (params: UDCGetListParams): Promise<ADALGetListResult> => {
+                    return bridgeToCPI('pepperi.api.userDefinedCollections.getList', params);
                 }
             },
         },
