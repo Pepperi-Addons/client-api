@@ -96,6 +96,7 @@ export interface ADALGetResult {
 export interface ADALGetListParams {
     addon: string;
     table: string;
+    index?: string;
 }
 
 export interface ADALGetListResult {
@@ -190,6 +191,7 @@ export interface UDCGetParams {
 
 export interface UDCGetListParams {
     table: string;
+    index?: string;
 }
 
 type Bridge = (params: any) => Promise<any>
