@@ -86,6 +86,16 @@ export interface ADALGetParams {
     key: string;
 }
 
+export interface ADALUpsertParams {
+    addon: string;
+    table: string;
+    indexedField: string;
+    object: {
+        Key: string;
+        [key: string]: any;
+    };
+}
+
 export interface ADALGetResult {
     object: {
         Key: string;
@@ -304,6 +314,9 @@ export default function Factory(bridge: Bridge) {
                 update: updateFunction('pepperi.api.transactionScopeItems.update'),
             },
             adal: {
+                upsert: (params: ADALUpsertParams): Promise<ADALGetResult> => {
+                    return bridgeToCPI('pepperi.api.adal.upsert', params);
+                },
                 get: (params: ADALGetParams): Promise<ADALGetResult> => {
                     return bridgeToCPI('pepperi.api.adal.get', params);
                 },
