@@ -96,6 +96,16 @@ export interface ADALUpsertParams {
     };
 }
 
+export interface DraftUpsertTableParams {
+    addon: string;
+    table: string;
+}
+
+export interface DraftUpsertTableResult {
+    addon: string;
+    table: string;
+}
+
 export interface ADALGetResult {
     object: {
         Key: string;
@@ -322,6 +332,20 @@ export default function Factory(bridge: Bridge) {
                 },
                 getList: (params: ADALGetListParams): Promise<ADALGetListResult> => {
                     return bridgeToCPI('pepperi.api.adal.getList', params);
+                }
+            },
+            draft: {
+                upsert: (params: ADALUpsertParams): Promise<ADALGetResult> => {
+                    return bridgeToCPI('pepperi.api.draft.upsert', params);
+                },
+                upsertTable: (params: DraftUpsertTableParams): Promise<DraftUpsertTableResult> => {
+                    return bridgeToCPI('pepperi.api.draft.upsertTable', params);
+                },
+                get: (params: ADALGetParams): Promise<ADALGetResult> => {
+                    return bridgeToCPI('pepperi.api.draft.get', params);
+                },
+                getList: (params: ADALGetListParams): Promise<ADALGetListResult> => {
+                    return bridgeToCPI('pepperi.api.draft.getList', params);
                 }
             },
             userDefinedCollections: {
