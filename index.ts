@@ -309,6 +309,10 @@ export default function Factory(bridge: Bridge) {
             transactionScopeItems: {
                 get: getFunction('pepperi.api.transactionScopeItems.get'),
                 search: <T extends string>(params: OrderCenterSearchParams<T>): Promise<SearchResult<T>> => {
+                    // overriding default of this hidden parameter for new usage (eg. CPI Node)
+                    // this can't be done in the CPI due to old usage of this API
+                    // and due to the fact the when using the cache, the response can be a bit different (eg. default values of TSAs)
+                    (params as any)['useCache'] = true;
                     return bridgeToCPI('pepperi.api.transactionScopeItems.search', params);
                 },
                 update: updateFunction('pepperi.api.transactionScopeItems.update'),
